@@ -1,0 +1,40 @@
+---
+description: Tailwind CSS and shadcn/ui styling conventions
+globs: src/**/*.{tsx,css}
+alwaysApply: false
+---
+
+# Tailwind & shadcn/ui
+
+## Styling approach
+
+- Use Tailwind utility classes in JSX. Avoid custom CSS unless necessary (animations, global tokens).
+- Merge conditional classes with `cn()` from `@/lib/utils` — never string-concatenate class names.
+
+```tsx
+<div className={cn("rounded-lg border p-4", isActive && "border-primary")} />
+```
+
+## Design tokens
+
+- Use shadcn semantic tokens, not raw colors: `bg-background`, `text-foreground`, `text-muted-foreground`, `border-border`, `bg-primary`.
+- Use spacing scale (`p-4`, `gap-6`) and typography utilities (`text-sm`, `font-medium`) consistently.
+- Dark mode: rely on CSS variables in `src/index.css`; toggle with `.dark` on a parent element.
+
+## shadcn components
+
+- Add via CLI: `npx shadcn@latest add card input label` — don't hand-copy from docs unless needed.
+- Extend shadcn components with `className` and `cn()`, not by editing `components/ui/*` unless customizing the primitive.
+- Use `lucide-react` for icons with consistent sizing: `[&_svg]:size-4` or `className="size-4"`.
+
+## Layout and responsiveness
+
+- Mobile-first: base styles for small screens, then `sm:`, `md:`, `lg:` breakpoints.
+- Use flex/grid for layout; avoid fixed pixel widths for content containers.
+- Prefer `min-h-svh` over `min-h-screen` for mobile viewport correctness.
+
+## Avoid
+
+- Inline `style={{}}` except for truly dynamic values (e.g. drag position).
+- `@apply` in component files — keep utilities in JSX; reserve `@apply` for global base styles only.
+- Arbitrary values (`w-[437px]`) when a scale token exists.

@@ -1,0 +1,46 @@
+---
+description: Core frontend development standards for this project
+alwaysApply: true
+---
+
+# Frontend Core Standards
+
+## Scope and quality
+
+- Prefer the smallest correct change. Do not refactor unrelated code.
+- Match existing patterns in the codebase before introducing new abstractions.
+- Ship accessible, responsive UI by default — not as a follow-up task.
+
+## Project conventions
+
+- Use the `@/` path alias for imports from `src/`.
+- Keep shared UI in `@/components/ui` (shadcn). Add components via `npx shadcn@latest add <name>`.
+- Put app-wide providers in `src/providers/`.
+- Put reusable hooks in `src/hooks/`, utilities in `src/lib/`.
+
+## Accessibility (a11y)
+
+- Use semantic HTML: `main`, `nav`, `section`, `button`, `label`, etc.
+- Every interactive control needs an accessible name (`aria-label`, visible text, or associated `label`).
+- Support keyboard navigation and visible focus states.
+- Images need meaningful `alt` text; decorative images use `alt=""`.
+- Prefer shadcn components — they handle many a11y patterns already.
+
+## Performance
+
+- Avoid unnecessary re-renders: memoize expensive work, don't lift state too early.
+- Lazy-load routes and heavy components with `React.lazy` + `Suspense`.
+- Keep bundle size in mind: prefer tree-shakeable imports (`lucide-react` named imports).
+- Debounce search/filter inputs; paginate or virtualize long lists.
+
+## Error and loading states
+
+- Always handle loading, empty, error, and success states for async UI.
+- Show user-friendly error messages; log technical details only in dev tools.
+- Never leave users staring at a blank screen during fetches.
+
+## Security
+
+- Never commit secrets. Use `import.meta.env` for Vite env vars (prefix public vars with `VITE_`).
+- Sanitize user-generated HTML before rendering (`dangerouslySetInnerHTML` is a last resort).
+- Validate and encode data at trust boundaries (forms, URL params, API responses).

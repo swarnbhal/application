@@ -1,0 +1,50 @@
+---
+description: TanStack Query data fetching patterns
+globs: src/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# Data Fetching (TanStack Query)
+
+## Setup
+
+- App is wrapped in `QueryProvider` from `@/providers/query-provider`.
+- Keep fetch functions pure and separate from components (e.g. `src/api/users.ts`).
+
+## Query keys
+
+- Use hierarchical, typed key factories — never magic strings scattered in components.
+
+```tsx
+export const todoKeys = {
+  all: ["todos"] as const,
+  lists: () => [...todoKeys.all, "list"] as const,
+  list: (filters: string) => [...todoKeys.lists(), filters] as const,
+  detail: (id: string) => [...todoKeys.all, "detail", id] as const,
+}
+```
+
+## useQuery / useMutation
+
+- Always handle `isLoading`, `isError`, and `isSuccess` in UI.
+- Use `enabled` to prevent fetches when dependencies aren't ready.
+- Invalidate queries after mutations — prefer `queryClient.invalidateQueries({ queryKey })` over manual refetch loops.
+
+```tsx
+const { data, isLoading, isError, error } = useQuery({
+  queryKey: userKeys.detail(userId),
+  queryFn: () => fetchUser(userId),
+  enabled: !!userId,
+})
+```
+
+## Custom hooks
+
+- Wrap repeated query/mutation logic in hooks: `useUser(id)`, `useUpdateUser()`.
+- Return only what the component needs — not the entire query result object unless necessary.
+
+## Avoid
+
+- Fetching inside `useEffect` + `useState` when TanStack Query fits.
+- Storing server data in global client state (Zustand/Context) when Query cache is enough.
+- Over-broad invalidation — target specific query keys to reduce unnecessary refetches.

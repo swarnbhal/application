@@ -1,0 +1,45 @@
+---
+description: TypeScript conventions for frontend code
+globs: src/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# TypeScript Conventions
+
+## Typing discipline
+
+- Avoid `any`. Use `unknown` and narrow with type guards when shape is uncertain.
+- Prefer `interface` for object shapes; use `type` for unions, intersections, and utilities.
+- Export types that cross module boundaries; keep internal types private.
+
+## Functions and data
+
+- Type function return values for exported/public APIs.
+- Use `as const` for literal config objects and query keys.
+- Prefer exhaustive `switch` with `never` checks for discriminated unions.
+
+```tsx
+// ✅ GOOD — typed query key factory
+export const userKeys = {
+  all: ["users"] as const,
+  detail: (id: string) => [...userKeys.all, id] as const,
+}
+```
+
+## Async code
+
+- Return typed promises from fetchers: `Promise<User>`, not `Promise<any>`.
+- Model API errors with a dedicated type; don't assume happy-path responses.
+- Use optional chaining and nullish coalescing — avoid non-null assertions (`!`) unless truly safe.
+
+## Imports
+
+- Use `@/` alias: `import { Button } from "@/components/ui/button"`.
+- Prefer named exports for utilities and hooks; default export for page/route components is fine.
+
+## Environment variables
+
+```tsx
+const apiUrl = import.meta.env.VITE_API_URL
+if (!apiUrl) throw new Error("VITE_API_URL is not defined")
+```

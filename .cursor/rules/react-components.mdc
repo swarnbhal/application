@@ -1,0 +1,51 @@
+---
+description: React component patterns and structure
+globs: src/**/*.tsx
+alwaysApply: false
+---
+
+# React Component Patterns
+
+## Structure
+
+- Use functional components only. No class components.
+- One component per file; name the file after the component (`UserCard.tsx` → `UserCard`).
+- Colocate component-specific types in the same file; shared types go in `src/types/`.
+- Extract reusable logic into custom hooks (`useUserProfile`, not 40 lines of logic in JSX).
+
+## Props and composition
+
+- Type props with an explicit interface or type alias.
+- Prefer composition over prop drilling — use children and small focused components.
+- Avoid boolean prop explosion (`isLoading`, `isError`, `isEmpty`); use discriminated unions or separate components when it grows.
+
+```tsx
+// ❌ BAD — vague props
+function Card({ data, loading }: { data?: User; loading?: boolean }) { ... }
+
+// ✅ GOOD — explicit states
+type UserCardProps =
+  | { status: "loading" }
+  | { status: "error"; message: string }
+  | { status: "success"; user: User }
+```
+
+## Hooks rules
+
+- Call hooks only at the top level — never inside conditions, loops, or nested functions.
+- Keep effects focused; include all dependencies or explain why with an eslint/oxlint disable.
+- Prefer derived state over syncing with `useEffect`.
+
+## File layout order
+
+1. Imports (external → internal → types)
+2. Types / constants
+3. Component
+4. Sub-components (if small and private)
+5. Default export last
+
+## Avoid
+
+- `useEffect` for data fetching — use TanStack Query instead.
+- Index keys in dynamic lists when stable IDs exist.
+- Inline arrow functions as default props (creates new references each render).
