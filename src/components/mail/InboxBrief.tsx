@@ -10,6 +10,7 @@ interface InboxBriefProps {
   threadCount: number
   emptySet: boolean
   onRetry: () => void
+  onRefresh: () => void
 }
 
 export function InboxBrief({
@@ -20,6 +21,7 @@ export function InboxBrief({
   threadCount,
   emptySet,
   onRetry,
+  onRefresh,
 }: InboxBriefProps) {
   if (emptySet) return null
 
@@ -46,15 +48,27 @@ export function InboxBrief({
       aria-label="What needs you now"
       className="motion-safe:animate-in motion-safe:fade-in motion-safe:duration-500 border-b border-border bg-primary/5 px-4 py-3"
     >
-      <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2">
+      <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-sm font-medium">What needs you now</h2>
-        <p className="text-[11px] tracking-[0.14em] text-muted-foreground uppercase">
-          {pending
-            ? "Writing a brief…"
-            : generatedAt
-              ? `Written ${formatRelativeTime(generatedAt)} · ${threadCount} threads read`
-              : `${threadCount} threads`}
-        </p>
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="text-[11px] tracking-[0.14em] text-muted-foreground uppercase">
+            {pending
+              ? "Refreshing insights…"
+              : generatedAt
+                ? `Written ${formatRelativeTime(generatedAt)} · ${threadCount} threads read`
+                : `${threadCount} threads`}
+          </p>
+          <Button
+            type="button"
+            size="xs"
+            variant="outline"
+            aria-label="Refresh insights"
+            disabled={pending}
+            onClick={onRefresh}
+          >
+            {pending ? "Refreshing…" : "Refresh"}
+          </Button>
+        </div>
       </div>
       {pending && bullets.length === 0 ? (
         <p className="text-sm text-muted-foreground">

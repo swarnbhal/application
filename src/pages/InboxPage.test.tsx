@@ -42,6 +42,9 @@ describe("inbox render", () => {
       screen.getAllByText("Q3 numbers for the board pack").length,
     ).toBeGreaterThan(0)
     expect(screen.getByText("← Inbox")).toBeInTheDocument()
+    expect(
+      screen.getByRole("button", { name: "Refresh insights" }),
+    ).toBeInTheDocument()
   })
 
   it("renders compose for a new thread", () => {

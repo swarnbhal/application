@@ -96,14 +96,30 @@ export function InboxPage({ pathname }: InboxPageProps) {
 
   useEffect(() => {
     if (empty || brief || ollamaStatus !== "ready") return
-    const lines = paged.items
+    void dispatch(
+      generateInboxBrief({ cacheId: briefId, threadLines: briefThreadLines() }),
+    )
+  }, [brief, briefId, dispatch, empty, ollamaStatus, paged.items])
+
+  function briefThreadLines() {
+    return paged.items
       .map(
         (item) =>
           `${item.thread.subject} [${item.urgency}] ${item.lastMessage.body.slice(0, 180)}`,
       )
       .join("\n")
-    void dispatch(generateInboxBrief({ cacheId: briefId, threadLines: lines }))
-  }, [brief, briefId, dispatch, empty, ollamaStatus, paged.items])
+  }
+
+  async function refreshInsights() {
+    let ready = ollamaStatus === "ready"
+    if (!ready) {
+      ready = Boolean(await dispatch(probeOllama()).unwrap())
+    }
+    if (!ready || empty) return
+    void dispatch(
+      generateInboxBrief({ cacheId: briefId, threadLines: briefThreadLines() }),
+    )
+  }
 
   const bullets = brief?.content.split("\n").filter(Boolean) ?? []
   const messageCount = threadId
@@ -146,6 +162,7 @@ export function InboxPage({ pathname }: InboxPageProps) {
           threadCount={paged.items.length}
           emptySet={empty}
           onRetry={() => void dispatch(probeOllama())}
+          onRefresh={() => void refreshInsights()}
         />
         {empty ? (
           <div className="flex flex-1 flex-col items-start justify-center gap-3 px-6">
