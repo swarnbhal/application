@@ -5,7 +5,7 @@ export function QuietMarker({ className }: { className?: string }) {
     <span
       aria-hidden="true"
       className={cn(
-        "mt-[0.35em] inline-block h-3 w-px shrink-0 bg-zinc-400",
+        "mt-[0.35em] inline-block h-3 w-px shrink-0 bg-primary/55",
         className,
       )}
     />

@@ -96,13 +96,13 @@ export default function ComposePage() {
   }
 
   return (
-    <main className="flex min-h-0 flex-1 flex-col overflow-auto px-8 py-6">
+    <main className="motion-safe:animate-in motion-safe:fade-in motion-safe:duration-300 flex min-h-0 flex-1 flex-col overflow-auto px-8 py-6">
       <h1 className="text-lg font-medium tracking-tight">New thread</h1>
-      <p className="mt-1 text-sm text-zinc-500">
+      <p className="mt-1 text-sm text-muted-foreground">
         Write it yourself, or describe the intent and we will draft subject and body.
       </p>
       <form
-        className="mt-6 max-w-2xl space-y-4"
+        className="mt-6 max-w-2xl space-y-4 rounded-xl border border-border bg-card p-6 shadow-sm"
         onSubmit={(event) => {
           event.preventDefault()
           send()
@@ -116,7 +116,7 @@ export default function ComposePage() {
               return (
                 <label
                   key={item.id}
-                  className="flex items-center gap-2 rounded-full border px-3 py-1 text-sm"
+                  className="flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1 text-sm transition-colors duration-200 has-checked:border-primary/40 has-checked:bg-primary/8"
                 >
                   <input
                     type="checkbox"

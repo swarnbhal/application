@@ -70,6 +70,10 @@ export function InboxPage({ pathname }: InboxPageProps) {
       ? seedBrief
       : undefined)
 
+  const threads = useAppSelector((state) => state.mail.threads)
+  const showThreadPanel = Boolean(
+    threadId && threads.some((item) => item.id === threadId),
+  )
   const usersById = Object.fromEntries(fixtureUsers.map((user) => [user.id, user]))
   const empty = paged.total === 0
   const grouped = filters.groupByPerson
@@ -102,22 +106,16 @@ export function InboxPage({ pathname }: InboxPageProps) {
   }, [brief, briefId, dispatch, empty, ollamaStatus, paged.items])
 
   const bullets = brief?.content.split("\n").filter(Boolean) ?? []
-  const selectedIndex = paged.items.findIndex((item) => item.thread.id === threadId)
-  const selectedThread = paged.items.find((item) => item.thread.id === threadId)
-  const messageCount = selectedThread
-    ? threadMessages(selectedThread.thread.id, messages).length
+  const messageCount = threadId
+    ? threadMessages(threadId, messages).length
     : 0
-  const positionLabel =
-    selectedIndex >= 0
-      ? `Thread ${paged.fromIndex + selectedIndex} of ${paged.total}`
-      : ""
 
   return (
     <div className="flex min-h-0 min-w-0 flex-1">
       <section
         className={cn(
-          "flex min-w-0 flex-1 flex-col md:max-w-[42rem] md:border-r",
-          threadId && "hidden md:flex",
+          "flex min-w-0 flex-1 flex-col bg-card/50 transition-[max-width] duration-300 ease-out",
+          showThreadPanel && "hidden md:flex md:max-w-[42rem] md:border-r md:border-border",
         )}
       >
         <h1 className="sr-only">
@@ -145,7 +143,6 @@ export function InboxPage({ pathname }: InboxPageProps) {
           pending={Boolean(pending[`inbox_brief:${briefId}`])}
           unavailable={ollamaStatus === "unavailable"}
           generatedAt={brief?.generatedAt}
-          model={brief?.model}
           threadCount={paged.items.length}
           emptySet={empty}
           onRetry={() => void dispatch(probeOllama())}
@@ -157,7 +154,7 @@ export function InboxPage({ pathname }: InboxPageProps) {
                 ? `Nothing matches “${filters.keyword}”`
                 : "Nothing in this folder"}
             </p>
-            <p className="max-w-md text-sm text-zinc-500">
+            <p className="max-w-md text-sm text-muted-foreground">
               The brief is hidden rather than invented — there is no work to report
               on an empty set.
             </p>
@@ -199,21 +196,14 @@ export function InboxPage({ pathname }: InboxPageProps) {
           onPageSizeChange={(size) => dispatch(setPageSize(size))}
         />
       </section>
-      {threadId ? (
+      {showThreadPanel && threadId ? (
         <EmailView
+          key={threadId}
           threadId={threadId}
           folderPath={folderPath(folder)}
-          positionLabel={
-            messageCount
-              ? `${positionLabel} · ${messageCount} messages`
-              : positionLabel
-          }
+          messageCount={messageCount}
         />
-      ) : (
-        <div className="hidden min-w-0 flex-1 items-center justify-center border-l text-sm text-zinc-400 lg:flex">
-          Select a thread
-        </div>
-      )}
+      ) : null}
     </div>
   )
 }

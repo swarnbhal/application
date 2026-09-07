@@ -84,7 +84,7 @@ export function ThreadList({
       {grouped
         ? grouped.map((group) => (
             <section key={group.userId} className="border-b last:border-b-0">
-              <h3 className="bg-zinc-50 px-4 py-1.5 text-[11px] font-medium tracking-wide text-zinc-500">
+              <h3 className="bg-muted/80 px-4 py-1.5 text-[11px] font-medium tracking-wide text-muted-foreground">
                 {usersById[group.userId]?.name ?? "Other"}
               </h3>
               {group.items.map(renderRow)}

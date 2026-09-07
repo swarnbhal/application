@@ -25,7 +25,7 @@ export function PaginationBar({
 }: PaginationBarProps) {
   const lastPage = Math.max(1, Math.ceil(total / pageSize))
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 border-t px-4 py-2.5 text-xs text-muted-foreground">
+    <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border bg-card/60 px-4 py-2.5 text-xs text-muted-foreground">
       <p>
         {total === 0
           ? "Showing 0 of 0"

@@ -20,7 +20,6 @@ export default function ActivityPage() {
   const threads = useAppSelector((state) => state.mail.threads)
   const messages = useAppSelector((state) => state.mail.messages)
   const activity = useAppSelector((state) => state.activity)
-  const modelId = useAppSelector((state) => state.session.selectedModelId)
   const narrative = useAppSelector((state) =>
     selectInsight(state, "org_narrative", "org"),
   )
@@ -29,7 +28,7 @@ export default function ActivityPage() {
     return (
       <main className="flex flex-1 flex-col items-start justify-center gap-3 px-10">
         <h1 className="text-lg font-medium">Activity is for admins</h1>
-        <p className="max-w-md text-sm text-zinc-500">
+        <p className="max-w-md text-sm text-muted-foreground">
           {user.name.split(" ")[0]} is a member, so there is nothing here — not an
           error, and no data behind it.
         </p>
@@ -92,40 +91,43 @@ export default function ActivityPage() {
   ]
 
   return (
-    <main className="flex min-h-0 flex-1 flex-col overflow-auto px-6 py-5">
+    <main className="motion-safe:animate-in motion-safe:fade-in motion-safe:duration-300 flex min-h-0 flex-1 flex-col overflow-auto px-6 py-5">
       <header className="mb-5 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-[11px] tracking-[0.2em] text-zinc-400 uppercase">
+          <p className="text-[11px] tracking-[0.2em] text-muted-foreground uppercase">
             Inbox/AI
           </p>
           <h1 className="text-lg font-medium tracking-tight">
             Activity · all users
           </h1>
         </div>
-        <p className="text-sm text-zinc-500">1 Aug – 4 Sep</p>
+        <p className="text-sm text-muted-foreground">1 Aug – 4 Sep</p>
       </header>
       <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
         {kpis.map((kpi) => (
-          <article key={kpi.label} className="border px-3 py-3">
-            <p className="text-[11px] tracking-[0.16em] text-zinc-400 uppercase">
+          <article
+            key={kpi.label}
+            className="rounded-xl border border-border bg-card px-3 py-3 shadow-sm transition-transform duration-200 motion-safe:hover:-translate-y-0.5"
+          >
+            <p className="text-[11px] tracking-[0.16em] text-muted-foreground uppercase">
               {kpi.label}
             </p>
             <p className="mt-1 text-2xl font-medium tabular-nums">{kpi.value}</p>
-            <p className="text-xs text-zinc-500">{kpi.hint}</p>
+            <p className="text-xs text-muted-foreground">{kpi.hint}</p>
           </article>
         ))}
       </section>
-      <section className="mt-6 border px-4 py-4">
+      <section className="mt-6 rounded-xl border border-border bg-card px-4 py-4 shadow-sm">
         <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2">
-          <h2 className="text-[11px] tracking-[0.16em] text-zinc-400 uppercase">
+          <h2 className="text-[11px] tracking-[0.16em] text-muted-foreground uppercase">
             Machine read · org narrative
           </h2>
-          <p className="text-[11px] tracking-wide text-zinc-400">
+          <p className="text-[11px] tracking-wide text-muted-foreground">
             From aggregates + event types · no message bodies
           </p>
         </div>
         {narrative ? (
-          <p className="flex items-start gap-2 text-sm leading-relaxed text-zinc-800">
+          <p className="flex items-start gap-2 text-sm leading-relaxed text-foreground">
             <QuietMarker className="mt-1.5" />
             <span>{narrative.content}</span>
           </p>
@@ -146,12 +148,12 @@ export default function ActivityPage() {
       </section>
       <section className="mt-6">
         <h2 className="mb-2 text-sm font-medium">Per user</h2>
-        <p className="mb-2 text-xs text-zinc-400">
+        <p className="mb-2 text-xs text-muted-foreground">
           Drill-down shows subject and age only — never bodies.
         </p>
-        <div className="overflow-x-auto border">
+        <div className="overflow-x-auto rounded-xl border border-border bg-card shadow-sm">
           <table className="w-full text-left text-sm">
-            <thead className="border-b text-[11px] tracking-[0.12em] text-zinc-400 uppercase">
+            <thead className="border-b border-border bg-muted/50 text-[11px] tracking-[0.12em] text-muted-foreground uppercase">
               <tr>
                 <th className="px-3 py-2 font-medium">User</th>
                 <th className="px-3 py-2 font-medium">Sent</th>
@@ -184,10 +186,10 @@ export default function ActivityPage() {
       </section>
       <section className="mt-6">
         <h2 className="mb-2 text-sm font-medium">Timeline</h2>
-        <ol className="divide-y border">
+        <ol className="divide-y divide-border rounded-xl border border-border bg-card shadow-sm">
           {pageEvents.map((event) => (
             <li key={event.id} className="flex gap-3 px-3 py-2 text-sm">
-              <time className="w-12 shrink-0 tabular-nums text-zinc-400">
+              <time className="w-12 shrink-0 tabular-nums text-muted-foreground">
                 {formatRelativeTime(event.timestamp)}
               </time>
               <p>
@@ -195,7 +197,7 @@ export default function ActivityPage() {
                 {event.type.replaceAll("_", " ")}
                 {event.meta?.subject ? ` · ${event.meta.subject}` : ""}
                 {event.type === "ai_reply_applied" ? (
-                  <span className="ml-2 text-[11px] text-zinc-400">
+                  <span className="ml-2 text-[11px] text-muted-foreground">
                     ai_reply_applied
                   </span>
                 ) : null}
@@ -204,7 +206,7 @@ export default function ActivityPage() {
           ))}
         </ol>
         {ranged.length === 0 ? (
-          <p className="border px-3 py-6 text-sm text-zinc-500">
+          <p className="rounded-xl border border-border px-3 py-6 text-sm text-muted-foreground">
             No events in this range.
           </p>
         ) : (
@@ -218,7 +220,6 @@ export default function ActivityPage() {
           />
         )}
       </section>
-      <p className="sr-only">Model {modelId}</p>
     </main>
   )
 }

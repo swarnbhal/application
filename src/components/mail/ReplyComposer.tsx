@@ -21,13 +21,13 @@ export function ReplyComposer({
   canSend,
 }: ReplyComposerProps) {
   return (
-    <section aria-label="Reply" className="border-t px-5 py-3">
+    <section aria-label="Reply" className="border-t border-border bg-muted/30 px-5 py-3">
       <p className="mb-2 flex flex-wrap items-center gap-1.5 text-sm">
-        <span className="text-zinc-500">Reply to</span>
+        <span className="text-muted-foreground">Reply to</span>
         {toUserIds.map((id) => (
           <span
             key={id}
-            className="rounded-full border px-2 py-0.5 text-xs"
+            className="rounded-full border border-border bg-card px-2 py-0.5 text-xs"
           >
             {usersById[id]?.name ?? id}
           </span>
