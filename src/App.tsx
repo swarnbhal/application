@@ -1,36 +1,42 @@
-import { useQuery } from "@tanstack/react-query"
-import { Button } from "@/components/ui/button"
+import { lazy, Suspense } from "react"
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom"
 
-async function fetchGreeting(): Promise<string> {
-  await new Promise((resolve) => setTimeout(resolve, 500))
-  return "Hello from React Query"
+import { AppShell } from "@/components/layout/AppShell"
+import { InboxPage } from "@/pages/InboxPage"
+
+const ComposePage = lazy(() => import("@/pages/ComposePage"))
+const ActivityPage = lazy(() => import("@/pages/ActivityPage"))
+
+function FolderInbox() {
+  const location = useLocation()
+  return <InboxPage pathname={location.pathname} />
 }
 
 function App() {
-  const { data, isLoading, refetch, isFetching } = useQuery({
-    queryKey: ["greeting"],
-    queryFn: fetchGreeting,
-  })
-
   return (
-    <main className="flex min-h-svh flex-col items-center justify-center gap-6 p-8">
-      <div className="max-w-md space-y-2 text-center">
-        <h1 className="text-3xl font-semibold tracking-tight">
-          React Starter
-        </h1>
-        <p className="text-muted-foreground">
-          Vite + React + Tailwind + shadcn/ui + TanStack Query
-        </p>
-      </div>
-
-      <div className="flex min-h-10 items-center justify-center rounded-lg border bg-card px-6 py-4 text-sm">
-        {isLoading ? "Loading..." : data}
-      </div>
-
-      <Button onClick={() => refetch()} disabled={isFetching}>
-        {isFetching ? "Fetching..." : "Refetch data"}
-      </Button>
-    </main>
+    <BrowserRouter>
+      <Suspense
+        fallback={
+          <div className="flex min-h-svh items-center justify-center text-sm text-zinc-500">
+            Loading…
+          </div>
+        }
+      >
+        <Routes>
+          <Route element={<AppShell />}>
+            <Route path="/" element={<Navigate to="/inbox" replace />} />
+            <Route path="/inbox" element={<FolderInbox />} />
+            <Route path="/inbox/:threadId" element={<FolderInbox />} />
+            <Route path="/unread" element={<FolderInbox />} />
+            <Route path="/unread/:threadId" element={<FolderInbox />} />
+            <Route path="/sent" element={<FolderInbox />} />
+            <Route path="/sent/:threadId" element={<FolderInbox />} />
+            <Route path="/compose" element={<ComposePage />} />
+            <Route path="/activity" element={<ActivityPage />} />
+          </Route>
+        </Routes>
+      </Suspense>
+    </BrowserRouter>
   )
 }
 
