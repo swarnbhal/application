@@ -73,7 +73,7 @@ export function SearchFilterBar({
   ].filter(Boolean)
 
   return (
-    <div className="flex flex-col gap-2 border-b px-4 py-3">
+    <div className="flex flex-col gap-2 border-b border-border bg-card/70 px-4 py-3">
       <div className="flex flex-wrap items-center gap-2">
         <label className="sr-only" htmlFor="thread-search">
           Find a thread
@@ -155,7 +155,7 @@ export function SearchFilterBar({
         </Button>
       </div>
       {filtered ? (
-        <p className={cn("text-[11px] tracking-wide text-zinc-500")}>
+        <p className={cn("text-[11px] tracking-wide text-muted-foreground")}>
           Filtered: {summary.join(" ∩ ")}
         </p>
       ) : null}

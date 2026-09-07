@@ -64,7 +64,7 @@ Confirm:
 ollama list
 ```
 
-You should see `llama3.1`. The model picker in the header must match this name.
+You should see `llama3.1`. The app uses this model automatically (the header picker is hidden for now).
 
 ### 4. Reload the app
 

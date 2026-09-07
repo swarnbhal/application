@@ -40,18 +40,18 @@ export function ThreadRow({
       aria-selected={selected}
       tabIndex={-1}
       className={cn(
-        "flex cursor-pointer items-center gap-4 border-b px-4 outline-none",
-        "focus-visible:ring-3 focus-visible:ring-ring/50",
+        "flex cursor-pointer items-center gap-4 border-b border-border px-4 outline-none transition-colors duration-200",
+        "hover:bg-accent/70 focus-visible:ring-3 focus-visible:ring-ring/50",
         unread ? "h-[68px]" : "h-[62px]",
-        selected && "bg-zinc-50",
-        unread && "border-l-2 border-l-zinc-400",
+        selected && "bg-primary/10 shadow-[inset_3px_0_0_0_var(--primary)]",
+        unread && !selected && "border-l-2 border-l-primary/45",
       )}
       onClick={onSelect}
     >
       <p
         className={cn(
           "w-40 shrink-0 truncate text-sm",
-          unread ? "font-medium text-foreground" : "text-zinc-600",
+          unread ? "font-medium text-foreground" : "text-muted-foreground",
         )}
       >
         {who}
@@ -66,17 +66,17 @@ export function ThreadRow({
           {thread.subject}
         </p>
         {gist ? (
-          <p className="flex min-w-0 items-start gap-2 text-sm text-zinc-500">
+          <p className="flex min-w-0 items-start gap-2 text-sm text-muted-foreground">
             <QuietMarker />
             <span className="truncate">{gist}</span>
           </p>
         ) : gistPending ? (
-          <p className="truncate text-sm text-zinc-400">Writing gist…</p>
+          <p className="truncate text-sm text-muted-foreground/80">Writing gist…</p>
         ) : null}
       </div>
       <UrgencyChip urgency={urgency} />
       <time
-        className="w-12 shrink-0 text-right text-xs tabular-nums text-zinc-500"
+        className="w-12 shrink-0 text-right text-xs tabular-nums text-muted-foreground"
         dateTime={thread.lastMessageAt}
       >
         {formatRelativeTime(thread.lastMessageAt)}

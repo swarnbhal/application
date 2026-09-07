@@ -29,13 +29,13 @@ import { fixtureUsers } from "@/data"
 interface EmailViewProps {
   threadId: string
   folderPath: string
-  positionLabel: string
+  messageCount: number
 }
 
 export function EmailView({
   threadId,
   folderPath,
-  positionLabel,
+  messageCount,
 }: EmailViewProps) {
   const dispatch = useAppDispatch()
   const thread = useAppSelector((state) =>
@@ -43,7 +43,6 @@ export function EmailView({
   )
   const allMessages = useAppSelector((state) => state.mail.messages)
   const userId = useAppSelector((state) => state.session.currentUserId)
-  const modelId = useAppSelector((state) => state.session.selectedModelId)
   const selectedMessageId = useAppSelector(
     (state) => state.compose.selectedMessageId,
   )
@@ -59,8 +58,9 @@ export function EmailView({
     () => (thread ? threadMessages(thread.id, allMessages) : []),
     [thread, allMessages],
   )
-  const activeId = selectedMessageId ?? messages.at(-1)?.id
-  const active = messages.find((message) => message.id === activeId)
+  const active =
+    messages.find((message) => message.id === selectedMessageId) ??
+    messages.at(-1)
   const summary = useAppSelector((state) =>
     active ? selectInsight(state, "summary", active.id) : undefined,
   )
@@ -69,6 +69,11 @@ export function EmailView({
   )
 
   const openedFor = useRef<string | null>(null)
+
+  useEffect(() => {
+    setTone("brief")
+    setDismissed(false)
+  }, [threadId])
 
   useEffect(() => {
     if (!thread || openedFor.current === thread.id) return
@@ -102,11 +107,7 @@ export function EmailView({
   const replyToUserIds = useAppSelector((state) => state.compose.replyToUserIds)
 
   if (!thread || !active) {
-    return (
-      <div className="flex flex-1 items-center justify-center p-8 text-sm text-zinc-500">
-        Thread not found.
-      </div>
-    )
+    return null
   }
 
   const viewThread = thread
@@ -167,16 +168,20 @@ export function EmailView({
   }
 
   return (
-    <article className="flex min-h-0 min-w-0 flex-1 flex-col border-l">
-      <header className="flex items-center justify-between gap-3 border-b px-4 py-2 text-sm">
+    <article className="motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-right-4 motion-safe:duration-300 flex min-h-0 min-w-0 flex-1 flex-col border-l border-border bg-card shadow-[-12px_0_32px_-18px_rgba(15,39,68,0.28)]">
+      <header className="flex items-center justify-between gap-3 border-b border-border px-4 py-2 text-sm">
         <div className="flex items-center gap-3">
           <Link
             to={folderPath}
-            className="text-zinc-600 outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+            className="text-muted-foreground outline-none transition-colors duration-200 hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
           >
             ← Inbox
           </Link>
-          <p className="text-zinc-400">{positionLabel}</p>
+          {messageCount > 0 ? (
+            <p className="text-muted-foreground">
+              {messageCount} {messageCount === 1 ? "message" : "messages"}
+            </p>
+          ) : null}
         </div>
       </header>
       <div className="flex min-h-0 flex-1">
@@ -189,10 +194,10 @@ export function EmailView({
         <div className="flex min-w-0 flex-1 flex-col overflow-auto">
           <div className="px-5 py-4">
             <h1 className="text-lg font-medium tracking-tight">{thread.subject}</h1>
-            <p className="mt-1 flex flex-wrap items-center gap-2 text-sm text-zinc-500">
+            <p className="mt-1 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
               <span>
                 {usersById[active.fromUserId]?.name}{" "}
-                <span className="text-zinc-400">
+                <span className="text-muted-foreground/80">
                   &lt;{usersById[active.fromUserId]?.email}&gt;
                 </span>
               </span>
@@ -212,14 +217,13 @@ export function EmailView({
             pending={Boolean(pending[`summary:${active.id}`])}
             onRetry={requestSummary}
           />
-          <div className="px-5 py-4 text-sm leading-relaxed whitespace-pre-wrap text-zinc-800">
+          <div className="px-5 py-4 text-sm leading-relaxed whitespace-pre-wrap text-foreground">
             {active.body}
           </div>
           {!dismissed ? (
             <SuggestedReply
               draft={reply?.content ?? ""}
               pending={Boolean(pending[`reply:${active.id}`])}
-              model={modelId}
               tone={tone}
               onTone={(next) => {
                 setTone(next)
